@@ -1,0 +1,10 @@
+glide.lock
+p7
+pkg/
+src/
+vendor/
+*.tar
+main
+kube
+cmd/image/image
+cmd/api/tool/p7-cli/p7-cli

@@ -1,0 +1,365 @@
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+definitions:
+  Lambda:
+    description: A microservice function named lambda (default view)
+    example:
+      href: /lambdas/1
+      id: 1
+      name: b6wz
+    properties:
+      href:
+        description: API href for making requests on the lambda
+        example: /lambdas/1
+        type: string
+      id:
+        description: Unique lambda ID
+        example: 1
+        format: int64
+        type: integer
+      name:
+        description: Name of lambda
+        example: b6wz
+        minLength: 2
+        type: string
+    required:
+    - id
+    - href
+    - name
+    title: 'Mediatype identifier: application/vnd.lambda+json; view=default'
+    type: object
+  LambdaCollection:
+    description: LambdaCollection is the media type for an array of Lambda (default
+      view)
+    example:
+    - href: /lambdas/1
+      id: 1
+      name: b6wz
+    items:
+      $ref: '#/definitions/Lambda'
+    title: 'Mediatype identifier: application/vnd.lambda+json; type=collection; view=default'
+    type: array
+  LambdaPayload:
+    description: LambdaPayload is the type used to create a lambda
+    example:
+      code: f5bzyr60yi
+      name: rs5k
+    properties:
+      code:
+        description: Code that should be executed
+        example: f5bzyr60yi
+        maxLength: 500
+        minLength: 16
+        type: string
+      name:
+        description: Name of lambda
+        example: rs5k
+        minLength: 2
+        type: string
+    required:
+    - name
+    - code
+    title: LambdaPayload
+    type: object
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+host: localhost:8888
+info:
+  description: Microservice management service
+  version: ""
+paths:
+  /js/{filepath}:
+    get:
+      operationId: js#/js/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download public/js
+  /p7/_ah/health:
+    get:
+      description: Perform health check.
+      operationId: health#health
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: health health
+      tags:
+      - health
+  /p7/lambdas:
+    get:
+      description: List all avilable lambdas
+      operationId: lambda#list
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/LambdaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: list lambda
+      tags:
+      - lambda
+    post:
+      description: Creates a lambda
+      operationId: lambda#create
+      parameters:
+      - description: LambdaPayload is the type used to create a lambda
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/LambdaPayload'
+      responses:
+        "201":
+          description: Resource created
+          headers:
+            Location:
+              description: href to created resource
+              pattern: ^/lambdas/[0-9]+$
+              type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: create lambda
+      tags:
+      - lambda
+  /p7/lambdas/{lambda_id}:
+    delete:
+      operationId: lambda#delete
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: delete lambda
+      tags:
+      - lambda
+    get:
+      description: Retrieve lambda with given id
+      operationId: lambda#show
+      parameters:
+      - description: Lambda ID
+        in: path
+        name: lambda_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Lambda'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: show lambda
+      tags:
+      - lambda
+    patch:
+      operationId: lambda#update
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      - description: LambdaPayload is the type used to create a lambda
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/LambdaPayload'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: update lambda
+      tags:
+      - lambda
+  /p7/lambdas/{lambda_id}/actions/code:
+    get:
+      description: Retrieve lambda code with given id
+      operationId: lambda#code
+      parameters:
+      - description: Lambda ID
+        in: path
+        name: lambda_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Lambda'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: code lambda
+      tags:
+      - lambda
+  /p7/lambdas/{lambda_id}/watch:
+    get:
+      description: Retrieve lambda with given id
+      operationId: lambda#watch
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      responses:
+        "101":
+          description: Switching Protocols
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - ws
+      summary: watch lambda
+      tags:
+      - lambda
+  /swagger-ui/{filepath}:
+    get:
+      operationId: swagger#/swagger-ui/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download swagger-ui/
+  /swagger.json:
+    get:
+      operationId: swagger#/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download swagger/swagger.json
+  /ui:
+    get:
+      operationId: public#/ui
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download public/html/index.html
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+responses:
+  NoContent:
+    description: No Content
+  NotFound:
+    description: Not Found
+  OK:
+    description: OK
+    schema:
+      $ref: '#/definitions/Lambda'
+  SwitchingProtocols:
+    description: Switching Protocols
+schemes:
+- http
+swagger: "2.0"

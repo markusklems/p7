@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lambda
+spec:
+  template:
+    metadata:
+      name: lambda
+    spec:
+      containers:
+      - name: lambda
+        image: localhost:5000/tmrtn/microservice
+#        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      restartPolicy: Never

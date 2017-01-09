@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: kube-system-kube-registry-pv
+  labels:
+    kubernetes.io/cluster-service: "true"
+    type: local
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "$HOME/k8s/storage/registry"

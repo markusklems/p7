@@ -1,0 +1,3 @@
+FROM lambci/lambda
+ARG CODE_PATH
+ADD ${CODE_PATH} /var/task/

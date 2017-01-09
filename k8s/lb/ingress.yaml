@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: p7-ingress
+	namespace: p7
+spec:
+	rules:
+		- http:
+			paths:
+				- path: /testpath
+					backend:
+						serviceName: p7
+						servicePort: 8888
