@@ -24,11 +24,11 @@ import (
 	"net/url"
 )
 
-// HealthHealthOK runs the method Health of the given controller with the given parameters.
+// CheckHealthOK runs the method Check of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func HealthHealthOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.HealthController) http.ResponseWriter {
+func CheckHealthOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.HealthController) http.ResponseWriter {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -49,7 +49,7 @@ func HealthHealthOK(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/p7/_ah/health"),
+		Path: fmt.Sprintf("/p7/health/check"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -60,13 +60,13 @@ func HealthHealthOK(t goatest.TInterface, ctx context.Context, service *goa.Serv
 		ctx = context.Background()
 	}
 	goaCtx := goa.NewContext(goa.WithAction(ctx, "HealthTest"), rw, req, prms)
-	healthCtx, err := app.NewHealthHealthContext(goaCtx, service)
+	checkCtx, err := app.NewCheckHealthContext(goaCtx, service)
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
 
 	// Perform action
-	err = ctrl.Health(healthCtx)
+	err = ctrl.Check(checkCtx)
 
 	// Validate response
 	if err != nil {

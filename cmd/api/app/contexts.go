@@ -16,26 +16,26 @@ import (
 	"strconv"
 )
 
-// HealthHealthContext provides the health health action context.
-type HealthHealthContext struct {
+// CheckHealthContext provides the health check action context.
+type CheckHealthContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
 }
 
-// NewHealthHealthContext parses the incoming request URL and body, performs validations and creates the
-// context used by the health controller health action.
-func NewHealthHealthContext(ctx context.Context, service *goa.Service) (*HealthHealthContext, error) {
+// NewCheckHealthContext parses the incoming request URL and body, performs validations and creates the
+// context used by the health controller check action.
+func NewCheckHealthContext(ctx context.Context, service *goa.Service) (*CheckHealthContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := HealthHealthContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := CheckHealthContext{Context: ctx, ResponseData: resp, RequestData: req}
 	return &rctx, err
 }
 
 // OK sends a HTTP response with status code 200.
-func (ctx *HealthHealthContext) OK(resp []byte) error {
+func (ctx *CheckHealthContext) OK(resp []byte) error {
 	ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	ctx.ResponseData.WriteHeader(200)
 	_, err := ctx.ResponseData.Write(resp)

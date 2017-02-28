@@ -15,7 +15,7 @@
         }
       });
       requirejs(['client'], function (client) {
-        client().codeLambda ("/p7/lambdas/3867625925818730607/actions/code")
+        client().checkHealth ("/p7/health/check")
           .then(function (resp) {
             document.getElementById('response').innerHTML = resp.statusText;
           })

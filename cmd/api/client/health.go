@@ -17,23 +17,23 @@ import (
 	"net/url"
 )
 
-// HealthHealthPath computes a request path to the health action of health.
-func HealthHealthPath() string {
+// CheckHealthPath computes a request path to the check action of health.
+func CheckHealthPath() string {
 
-	return fmt.Sprintf("/p7/_ah/health")
+	return fmt.Sprintf("/p7/health/check")
 }
 
 // Perform health check.
-func (c *Client) HealthHealth(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewHealthHealthRequest(ctx, path)
+func (c *Client) CheckHealth(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewCheckHealthRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
 	return c.Client.Do(ctx, req)
 }
 
-// NewHealthHealthRequest create the request corresponding to the health action endpoint of the health resource.
-func (c *Client) NewHealthHealthRequest(ctx context.Context, path string) (*http.Request, error) {
+// NewCheckHealthRequest create the request corresponding to the check action endpoint of the health resource.
+func (c *Client) NewCheckHealthRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

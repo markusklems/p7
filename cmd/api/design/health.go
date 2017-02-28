@@ -7,11 +7,11 @@ import (
 
 var _ = Resource("health", func() {
 
-	BasePath("/_ah")
+	BasePath("/health")
 
-	Action("health", func() {
+	Action("check", func() {
 		Routing(
-			GET("/health"),
+			GET("/check"),
 		)
 		Description("Perform health check.")
 		Response(OK, "text/plain")

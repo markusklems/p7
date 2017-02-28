@@ -180,16 +180,16 @@ paths:
       schemes:
       - http
       summary: Download public/js
-  /p7/_ah/health:
+  /p7/health/check:
     get:
       description: Perform health check.
-      operationId: health#health
+      operationId: health#check
       responses:
         "200":
           description: OK
       schemes:
       - http
-      summary: health health
+      summary: check health
       tags:
       - health
   /p7/lambdas:

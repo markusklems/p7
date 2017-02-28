@@ -82,7 +82,7 @@ func handleCSSOrigin(h goa.Handler) goa.Handler {
 // HealthController is the controller interface for the Health actions.
 type HealthController interface {
 	goa.Muxer
-	Health(*HealthHealthContext) error
+	Check(*CheckHealthContext) error
 }
 
 // MountHealthController "mounts" a Health resource controller on the given service.
@@ -96,14 +96,14 @@ func MountHealthController(service *goa.Service, ctrl HealthController) {
 			return err
 		}
 		// Build the context
-		rctx, err := NewHealthHealthContext(ctx, service)
+		rctx, err := NewCheckHealthContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.Health(rctx)
+		return ctrl.Check(rctx)
 	}
-	service.Mux.Handle("GET", "/p7/_ah/health", ctrl.MuxHandler("Health", h, nil))
-	service.LogInfo("mount", "ctrl", "Health", "action", "Health", "route", "GET /p7/_ah/health")
+	service.Mux.Handle("GET", "/p7/health/check", ctrl.MuxHandler("Check", h, nil))
+	service.LogInfo("mount", "ctrl", "Health", "action", "Check", "route", "GET /p7/health/check")
 }
 
 // ImgController is the controller interface for the Img actions.

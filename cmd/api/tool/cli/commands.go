@@ -28,8 +28,8 @@ import (
 )
 
 type (
-	// HealthHealthCommand is the command line data structure for the health action of health
-	HealthHealthCommand struct {
+	// CheckHealthCommand is the command line data structure for the check action of health
+	CheckHealthCommand struct {
 		PrettyPrint bool
 	}
 
@@ -90,13 +90,13 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "code",
-		Short: `Retrieve lambda code with given id`,
+		Use:   "check",
+		Short: `Perform health check.`,
 	}
-	tmp1 := new(CodeLambdaCommand)
+	tmp1 := new(CheckHealthCommand)
 	sub = &cobra.Command{
-		Use:   `lambda ["/p7/lambdas/LAMBDA_ID/actions/code"]`,
-		Short: `A microservice function named lambda`,
+		Use:   `health ["/p7/health/check"]`,
+		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
@@ -104,10 +104,24 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "code",
+		Short: `Retrieve lambda code with given id`,
+	}
+	tmp2 := new(CodeLambdaCommand)
+	sub = &cobra.Command{
+		Use:   `lambda ["/p7/lambdas/LAMBDA_ID/actions/code"]`,
+		Short: `A microservice function named lambda`,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+	}
+	tmp2.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "create",
 		Short: `Creates a lambda`,
 	}
-	tmp2 := new(CreateLambdaCommand)
+	tmp3 := new(CreateLambdaCommand)
 	sub = &cobra.Command{
 		Use:   `lambda ["/p7/lambdas"]`,
 		Short: `A microservice function named lambda`,
@@ -119,34 +133,20 @@ Payload example:
    "code": "f5bzyr60yi",
    "name": "rs5k"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
-	}
-	tmp2.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "delete",
-		Short: ``,
-	}
-	tmp3 := new(DeleteLambdaCommand)
-	sub = &cobra.Command{
-		Use:   `lambda ["/p7/lambdas/LAMBDA_ID"]`,
-		Short: `A microservice function named lambda`,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "health",
-		Short: `Perform health check.`,
-	}
-	tmp4 := new(HealthHealthCommand)
-	sub = &cobra.Command{
-		Use:   `health ["/p7/_ah/health"]`,
+		Use:   "delete",
 		Short: ``,
+	}
+	tmp4 := new(DeleteLambdaCommand)
+	sub = &cobra.Command{
+		Use:   `lambda ["/p7/lambdas/LAMBDA_ID"]`,
+		Short: `A microservice function named lambda`,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
 	tmp4.RegisterFlags(sub, c)
@@ -461,17 +461,17 @@ found:
 	return nil
 }
 
-// Run makes the HTTP request corresponding to the HealthHealthCommand command.
-func (cmd *HealthHealthCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the CheckHealthCommand command.
+func (cmd *CheckHealthCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/p7/_ah/health"
+		path = "/p7/health/check"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.HealthHealth(ctx, path)
+	resp, err := c.CheckHealth(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -482,7 +482,7 @@ func (cmd *HealthHealthCommand) Run(c *client.Client, args []string) error {
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *HealthHealthCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+func (cmd *CheckHealthCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 }
 
 // Run makes the HTTP request corresponding to the CodeLambdaCommand command.

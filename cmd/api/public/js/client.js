@@ -19,6 +19,24 @@ define(['axios'] , function (axios) {
     // URL prefix for all API requests.
     var urlPrefix = scheme + '://' + host;
 
+  // Perform health check.
+  // path is the request path, the format is "/p7/health/check"
+  // config is an optional object to be merged into the config built by the function prior to making the request.
+  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
+  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
+  client.checkHealth = function (path, config) {
+    cfg = {
+      timeout: timeout,
+      url: urlPrefix + path,
+      method: 'get',
+      responseType: 'json'
+    };
+    if (config) {
+      cfg = merge(cfg, config);
+    }
+    return client(cfg);
+  }
+
   // Retrieve lambda code with given id
   // path is the request path, the format is "/p7/lambdas/:lambda_id/actions/code"
   // config is an optional object to be merged into the config built by the function prior to making the request.
@@ -67,24 +85,6 @@ define(['axios'] , function (axios) {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'delete',
-      responseType: 'json'
-    };
-    if (config) {
-      cfg = merge(cfg, config);
-    }
-    return client(cfg);
-  }
-
-  // Perform health check.
-  // path is the request path, the format is "/p7/_ah/health"
-  // config is an optional object to be merged into the config built by the function prior to making the request.
-  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
-  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.healthHealth = function (path, config) {
-    cfg = {
-      timeout: timeout,
-      url: urlPrefix + path,
-      method: 'get',
       responseType: 'json'
     };
     if (config) {
