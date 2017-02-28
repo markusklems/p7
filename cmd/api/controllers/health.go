@@ -15,7 +15,7 @@ func NewHealth(service *goa.Service) *HealthController {
 	return &HealthController{Controller: service.NewController("HealthController")}
 }
 
-// Health runs the health action.
-func (c *HealthController) Health(ctx *app.HealthHealthContext) error {
+// Check runs the check action.
+func (c *HealthController) Check(ctx *app.CheckHealthContext) error {
 	return ctx.OK([]byte("OK"))
 }
