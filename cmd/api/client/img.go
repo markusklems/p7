@@ -4,7 +4,7 @@
 // --out=$(GOPATH)/src/github.com/markusklems/p7/cmd/api
 // --version=v1.1.0-dirty
 //
-// API "p7": public Resource Client
+// API "p7": img Resource Client
 //
 // The content of this file is auto-generated, DO NOT MODIFY
 
@@ -18,16 +18,18 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 )
 
-// Download downloads index.html and writes it to the file dest.
+// DownloadImg downloads /files with the given filename and writes it to the file dest.
 // It returns the number of bytes downloaded in case of success.
-func (c *Client) Download(ctx context.Context, dest string) (int64, error) {
+func (c *Client) DownloadImg(ctx context.Context, filename, dest string) (int64, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
-	u := url.URL{Host: c.Host, Scheme: scheme, Path: "/"}
+	p := path.Join("/img/", filename)
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: p}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return 0, err

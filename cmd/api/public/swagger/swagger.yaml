@@ -106,6 +106,59 @@ info:
   description: Microservice management service
   version: ""
 paths:
+  /:
+    get:
+      operationId: public#/
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download public/html/index.html
+  /css/{filepath}:
+    get:
+      operationId: css#/css/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download public/css
+  /img/{filepath}:
+    get:
+      operationId: img#/img/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download public/img
   /js/{filepath}:
     get:
       operationId: js#/js/*filepath
@@ -321,7 +374,7 @@ paths:
             $ref: '#/definitions/error'
       schemes:
       - http
-      summary: Download swagger-ui/
+      summary: Download public/swagger-ui/
   /swagger.json:
     get:
       operationId: swagger#/swagger.json
@@ -332,18 +385,7 @@ paths:
             type: file
       schemes:
       - http
-      summary: Download swagger/swagger.json
-  /ui:
-    get:
-      operationId: public#/ui
-      responses:
-        "200":
-          description: File downloaded
-          schema:
-            type: file
-      schemes:
-      - http
-      summary: Download public/html/index.html
+      summary: Download public/swagger/swagger.json
 produces:
 - application/json
 - application/xml

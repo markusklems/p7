@@ -1,7 +1,7 @@
 all: p7
 
 
-TAG = 0.0.2
+TAG = 0.0.3
 PREFIX = p7
 KEY = /tmp/nginx.key
 CERT = /tmp/nginx.crt
@@ -14,7 +14,7 @@ IMAGEDESIGNPATH = github.com/markusklems/p7/cmd/image/design
 
 p7:
 	cd cmd/api
-	tar -cvf p7.tar js swagger swagger-ui public
+	tar -cvf p7.tar public
 	-rm p7
 	go build -o p7 .
 
@@ -67,9 +67,9 @@ tmp:
 goagen_api:
 	goagen app     -d $(APIDESIGNPATH) -o cmd/api
 	goagen client  -d $(APIDESIGNPATH) -o cmd/api
-	goagen swagger -d $(APIDESIGNPATH) -o cmd/api
-	goagen js      -d $(APIDESIGNPATH) -o cmd/api
-	goagen schema  -d $(APIDESIGNPATH) -o cmd/api
+	goagen swagger -d $(APIDESIGNPATH) -o cmd/api/public
+	goagen js      -d $(APIDESIGNPATH) -o cmd/api/public
+	goagen schema  -d $(APIDESIGNPATH) -o cmd/api/public
 	goagen gen     -d $(APIDESIGNPATH) -o cmd/api --pkg-path=github.com/goadesign/gorma
 
 goagen_image:

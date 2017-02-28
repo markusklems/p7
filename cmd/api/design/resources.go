@@ -107,8 +107,8 @@ var _ = Resource("lambda", func() {
 var _ = Resource("swagger", func() {
 	Description("The API Swagger specification")
 
-	Files("/swagger.json", "swagger/swagger.json")
-	Files("/swagger-ui/*filepath", "swagger-ui/")
+	Files("/swagger.json", "public/swagger/swagger.json")
+	Files("/swagger-ui/*filepath", "public/swagger-ui/")
 })
 
 var _ = Resource("public", func() {
@@ -116,7 +116,19 @@ var _ = Resource("public", func() {
 		Methods("GET", "OPTIONS")
 	})
 	Files("/", "public/html/index.html")
+})
+
+var _ = Resource("img", func() {
+	Origin("*", func() {
+		Methods("GET", "OPTIONS")
+	})
 	Files("/img/*filepath", "public/img")
+})
+
+var _ = Resource("css", func() {
+	Origin("*", func() {
+		Methods("GET", "OPTIONS")
+	})
 	Files("/css/*filepath", "public/css")
 })
 

@@ -399,8 +399,8 @@ func (cmd *DownloadCommand) Run(c *client.Client, args []string) error {
 	if rpath[0] != '/' {
 		rpath = "/" + rpath
 	}
-	if rpath == "/ui" {
-		fnf = c.DownloadUI
+	if rpath == "/" {
+		fnf = c.Download
 		if outfile == "" {
 			outfile = "index.html"
 		}
@@ -410,6 +410,22 @@ func (cmd *DownloadCommand) Run(c *client.Client, args []string) error {
 		fnf = c.DownloadSwaggerJSON
 		if outfile == "" {
 			outfile = "swagger.json"
+		}
+		goto found
+	}
+	if strings.HasPrefix(rpath, "/css/") {
+		fnd = c.DownloadCSS
+		rpath = rpath[5:]
+		if outfile == "" {
+			_, outfile = path.Split(rpath)
+		}
+		goto found
+	}
+	if strings.HasPrefix(rpath, "/img/") {
+		fnd = c.DownloadImg
+		rpath = rpath[5:]
+		if outfile == "" {
+			_, outfile = path.Split(rpath)
 		}
 		goto found
 	}
