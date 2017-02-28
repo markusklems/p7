@@ -39,15 +39,16 @@ func main() {
 	fmt.Println(url)
 	db, err = gorm.Open("mysql", url)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Couldn't connect to database, proceed without database. Error: %s\n", err)
+	} else {
+		db.LogMode(true)
+
+		db.DropTable(&models.Lambda{})
+		db.AutoMigrate(&models.Lambda{})
+		db.DB().SetMaxOpenConns(50)
+
+		ldb = models.NewLambdaDB(db)
 	}
-	db.LogMode(true)
-
-	db.DropTable(&models.Lambda{})
-	db.AutoMigrate(&models.Lambda{})
-	db.DB().SetMaxOpenConns(50)
-
-	ldb = models.NewLambdaDB(db)
 
 	// Create service
 	service := goa.New("p7")

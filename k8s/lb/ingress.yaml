@@ -1,13 +1,23 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-	name: p7-ingress
-	namespace: p7
+  annotations:
+    ingress.kubernetes.io/auth-realm: Authentication Required
+    ingress.kubernetes.io/auth-secret: internal-services-auth
+    ingress.kubernetes.io/auth-type: basic
+    kubernetes.io/ingress.allow-http: "false"
+  name: p7-ingress
+  namespace: p7
 spec:
-	rules:
-		- http:
-			paths:
-				- path: /testpath
-					backend:
-						serviceName: p7
-						servicePort: 8888
+  tls:
+    - hosts:
+      - p7.tmrtn.de
+      secretName: p7-tls
+  rules:
+    - host: p7.tmrtn.de
+      http:
+      paths:
+        - path: /
+          backend:
+            serviceName: p7
+            servicePort: 8888

@@ -115,7 +115,9 @@ var _ = Resource("public", func() {
 	Origin("*", func() {
 		Methods("GET", "OPTIONS")
 	})
-	Files("/ui", "public/html/index.html")
+	Files("/", "public/html/index.html")
+	Files("/img/*filepath", "public/img")
+	Files("/css/*filepath", "public/css")
 })
 
 var _ = Resource("js", func() {

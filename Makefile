@@ -1,7 +1,7 @@
 all: p7
 
 
-TAG = 0.0.1
+TAG = 0.0.2
 PREFIX = p7
 KEY = /tmp/nginx.key
 CERT = /tmp/nginx.crt
@@ -14,7 +14,7 @@ IMAGEDESIGNPATH = github.com/markusklems/p7/cmd/image/design
 
 p7:
 	cd cmd/api
-	tar -cvf p7.tar js swagger swagger-ui
+	tar -cvf p7.tar js swagger swagger-ui public
 	-rm p7
 	go build -o p7 .
 
@@ -50,7 +50,6 @@ update:
 keys:
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $(KEY) -out $(CERT) -subj "/CN=nginxsvc/O=nginxsvc"
 
-
 secret: keys
 	# go run make_secret.go -crt $(CERT) -key $(KEY) > $(SECRET)
 	#https-nginx -crt $(CERT) -key $(KEY) > $(SECRET)
@@ -75,6 +74,9 @@ goagen_api:
 
 goagen_image:
 	goagen bootstrap -d $(IMAGEDESIGNPATH) -o cmd/image
+
+run: containers
+	docker run --rm -p 8888:8888 -ti $(PREFIX)/api:$(TAG)
 
 setup:
 	glide install
