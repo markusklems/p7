@@ -8,3 +8,4 @@ main
 kube
 cmd/image/image
 cmd/api/tool/p7-cli/p7-cli
+todo.txt

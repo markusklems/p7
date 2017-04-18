@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import "github.com/goadesign/goa"
 
@@ -7,7 +7,7 @@ type ImgController struct {
 	*goa.Controller
 }
 
-// NewImgController creates a img controller.
-func NewImgController(service *goa.Service) *ImgController {
+// NewImg creates a img controller.
+func NewImg(service *goa.Service) *ImgController {
 	return &ImgController{Controller: service.NewController("ImgController")}
 }

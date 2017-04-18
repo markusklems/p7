@@ -26,7 +26,7 @@ import (
 func (c *Client) DownloadCSS(ctx context.Context, filename, dest string) (int64, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	p := path.Join("/css/", filename)
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: p}

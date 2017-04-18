@@ -24,6 +24,9 @@ type job struct {
 	Uid  string
 }
 
+// Get a kubernetes client based on location.
+// If inside a pod, uses service account of the pod.
+// If outside, it uses a provided config file.
 func newKubeContext(inCluster bool) *kubeContext {
 	var config *rest.Config
 	var err error

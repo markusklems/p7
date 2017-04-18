@@ -1,15 +1,15 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: kube-system-kube-registry-pv
+  name: databases01
   labels:
     kubernetes.io/cluster-service: "true"
     type: local
     addonmanager.kubernetes.io/mode: Reconcile
 spec:
   capacity:
-    storage: 50Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "$HOME/k8s/storage/registry"
+    path: "/home/tbs/k8s/storage/database"

@@ -75,6 +75,14 @@ func main() {
 	pc := controllers.NewPublic(service)
 	app.MountPublicController(service, pc)
 
+	// Mount "img" controller
+	ic := controllers.NewImg(service)
+	app.MountImgController(service, ic)
+
+	// Mount "img" controller
+	cc := controllers.NewCSS(service)
+	app.MountCSSController(service, cc)
+
 	// Mount "swagger" controller
 	sc := controllers.NewSwagger(service)
 	app.MountSwaggerController(service, sc)

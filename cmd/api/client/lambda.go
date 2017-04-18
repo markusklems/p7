@@ -40,7 +40,7 @@ func (c *Client) CodeLambda(ctx context.Context, path string) (*http.Response, e
 func (c *Client) NewCodeLambdaRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -77,7 +77,7 @@ func (c *Client) NewCreateLambdaRequest(ctx context.Context, path string, payloa
 	}
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("POST", u.String(), &body)
@@ -111,7 +111,7 @@ func (c *Client) DeleteLambda(ctx context.Context, path string) (*http.Response,
 func (c *Client) NewDeleteLambdaRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
@@ -140,7 +140,7 @@ func (c *Client) ListLambda(ctx context.Context, path string) (*http.Response, e
 func (c *Client) NewListLambdaRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -170,7 +170,7 @@ func (c *Client) ShowLambda(ctx context.Context, path string) (*http.Response, e
 func (c *Client) NewShowLambdaRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -208,7 +208,7 @@ func (c *Client) NewUpdateLambdaRequest(ctx context.Context, path string, payloa
 	}
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("PATCH", u.String(), &body)

@@ -101,7 +101,7 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
-host: localhost:8888
+host: p7.tmrtn.de
 info:
   description: Microservice management service
   version: ""
@@ -115,7 +115,7 @@ paths:
           schema:
             type: file
       schemes:
-      - http
+      - https
       summary: Download public/html/index.html
   /css/{filepath}:
     get:
@@ -136,7 +136,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       summary: Download public/css
   /img/{filepath}:
     get:
@@ -157,7 +157,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       summary: Download public/img
   /js/{filepath}:
     get:
@@ -178,7 +178,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       summary: Download public/js
   /p7/health/check:
     get:
@@ -188,7 +188,7 @@ paths:
         "200":
           description: OK
       schemes:
-      - http
+      - https
       summary: check health
       tags:
       - health
@@ -208,7 +208,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: list lambda
       tags:
       - lambda
@@ -237,7 +237,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: create lambda
       tags:
       - lambda
@@ -259,7 +259,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: delete lambda
       tags:
       - lambda
@@ -280,7 +280,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: show lambda
       tags:
       - lambda
@@ -307,7 +307,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: update lambda
       tags:
       - lambda
@@ -329,7 +329,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - http
+      - https
       summary: code lambda
       tags:
       - lambda
@@ -373,7 +373,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       summary: Download public/swagger-ui/
   /swagger.json:
     get:
@@ -384,7 +384,7 @@ paths:
           schema:
             type: file
       schemes:
-      - http
+      - https
       summary: Download public/swagger/swagger.json
 produces:
 - application/json
@@ -403,5 +403,5 @@ responses:
   SwitchingProtocols:
     description: Switching Protocols
 schemes:
-- http
+- https
 swagger: "2.0"

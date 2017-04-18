@@ -9,8 +9,8 @@ import (
 // other global properties.
 var _ = API("p7", func() {
 	Description("Microservice management service")
-	Scheme("http")
-	Host("localhost:8888")
+	Scheme("https")
+	Host("p7.tmrtn.de")
 	BasePath("/p7")
 
 	ResponseTemplate(Created, func(pattern string) {

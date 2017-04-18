@@ -25,7 +25,7 @@ import (
 func (c *Client) Download(ctx context.Context, dest string) (int64, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: "/"}
 	req, err := http.NewRequest("GET", u.String(), nil)

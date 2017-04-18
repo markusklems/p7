@@ -1,13 +1,18 @@
 # debug
 kubectl --v=8 version
 
-kubectl create ns p7
-
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/tls.key -out /tmp/tls.crt -subj "/CN=jenkins/O=jenkins"
-kubectl create secret tls tls-secret --cert=path/to/tls.cert --key=path/to/tls.key
+kubectl create -f namespace-p7.json
 
 ### database
-helm install --name database stable/mysql
-# get root password - helm list # get release
-printf $(printf '\%o' `kubectl get secret [YOUR_RELEASE_NAME]-mysql -o jsonpath="{.data.mysql-root-password[*]}"`)
+helm install --name p7 --namespace p7 stable/mysql
+# edit pvc yaml and remove storage class annotation
+
+# get root password
+printf $(printf '\%o' `kubectl get secret --namespace p7 p7-mysql -o jsonpath="{.data.mysql-root-password[*]}"`);echo
+
+# debug database
+docker exec -ti mysql mysql -u root --password=rootpwd
+
+### p7
+kubectl -n p7 port-forward p7-3170047332-qtsn6 8888
 

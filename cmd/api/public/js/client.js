@@ -1,4 +1,4 @@
-// This module exports functions that give access to the p7 API hosted at localhost:8888.
+// This module exports functions that give access to the p7 API hosted at p7.tmrtn.de.
 // It uses the axios javascript library for making the actual HTTP requests.
 define(['axios'] , function (axios) {
   function merge(obj1, obj2) {
@@ -9,8 +9,8 @@ define(['axios'] , function (axios) {
   }
 
   return function (scheme, host, timeout) {
-    scheme = scheme || 'http';
-    host = host || 'localhost:8888';
+    scheme = scheme || 'https';
+    host = host || 'p7.tmrtn.de';
     timeout = timeout || 20000;
 
     // Client is the object returned by this module.

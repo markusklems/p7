@@ -1,15 +1,14 @@
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: kube-system-kube-registry-pv
+  name: p7-mysql
+  namespace: p7
   labels:
     kubernetes.io/cluster-service: "true"
-    type: local
     addonmanager.kubernetes.io/mode: Reconcile
 spec:
-  capacity:
-    storage: 50Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "$HOME/k8s/storage/registry"
+  resources:
+    requests:
+      storage: 10Gi

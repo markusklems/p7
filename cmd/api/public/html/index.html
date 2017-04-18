@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS Template</title>
+<title>p7 Dashboard</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
@@ -42,7 +42,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <a href="#" class="w3-padding"><i class="fa fa-bell fa-fw"></i>  News</a>
   <a href="#" class="w3-padding"><i class="fa fa-bank fa-fw"></i>  General</a>
   <a href="#" class="w3-padding"><i class="fa fa-history fa-fw"></i>  History</a>
-  <a href="#" class="w3-padding"><i class="fa fa-cog fa-fw"></i>  Settings</a><br><br>
+  <a href="#" class="w3-padding"><i class="fa fa-cog fa-fw"></i>  Settings</a>
+  <a href="/swagger-ui" class="w3-padding"><i class="fa fa-info-circle fa-fw"></i>  API documentation</a><br><br>
 </nav>
 
 
@@ -247,6 +248,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <!-- End page content -->
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 <script>
 // Get the Sidenav
 var mySidenav = document.getElementById("mySidenav");
@@ -270,6 +272,22 @@ function w3_close() {
     mySidenav.style.display = "none";
     overlayBg.style.display = "none";
 }
+
+requirejs.config({
+  paths: {
+    axios: '/js/axios.min',
+    client: '/js/client'
+  }
+});
+requirejs(['client'], function (client) {
+  client().checkHealth ("/p7/health/check")
+    .then(function (resp) {
+      console.log(resp)
+    })
+    .catch(function (resp) {
+      console.log(resp)
+    });
+});
 </script>
 
 </body>

@@ -19,8 +19,8 @@ spec:
       # hostNetwork: true
       terminationGracePeriodSeconds: 60
       containers:
-      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.3
-        name: nginx-ingress-controller
+      - name: nginx-ingress-controller
+        image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.2
         imagePullPolicy: Always
         readinessProbe:
           httpGet:
@@ -35,10 +35,8 @@ spec:
           initialDelaySeconds: 10
           timeoutSeconds: 1
         ports:
-        - containerPort: 80
-          hostPort: 80
-        - containerPort: 443
-          hostPort: 443
+        - containerPort: 8888
+          hostPort: 8888
         env:
           - name: POD_NAME
             valueFrom:
@@ -51,3 +49,28 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/p7
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: p7-ingress
+  annotations:
+    # type of authentication
+    ingress.kubernetes.io/auth-type: basic
+    # name of the secret that contains the user/password definitions
+    ingress.kubernetes.io/auth-secret: basic-auth
+    # message to display with an appropiate context why the authentication is required
+    ingress.kubernetes.io/auth-realm: "Authentication Required"
+    kubernetes.io/ingress.allow-http: "false"
+  namespace: p7
+spec:
+  tls:
+    - secretName: tmrtn.de
+  rules:
+  - host: p7.tmrtn.de
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: p7
+          servicePort: 8888

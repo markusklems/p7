@@ -5,7 +5,7 @@
   </head>
   <body>
     <h1>p7 Client Test</h1>
-    <div id="response"></div>
+    <p id="response"></p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
     <script>
       requirejs.config({
@@ -17,10 +17,17 @@
       requirejs(['client'], function (client) {
         client().checkHealth ("/p7/health/check")
           .then(function (resp) {
-            document.getElementById('response').innerHTML = resp.statusText;
+            console.log(resp)
           })
           .catch(function (resp) {
-            document.getElementById('response').innerHTML = resp.statusText;
+            console.log(resp)
+          });
+          client().listLambda ("/p7/lambdas")
+          .then(function (resp) {
+            console.log(resp)
+          })
+          .catch(function (resp) {
+            console.log(resp)
           });
       });
     </script>

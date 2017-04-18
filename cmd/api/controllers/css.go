@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import "github.com/goadesign/goa"
 
@@ -7,7 +7,7 @@ type CSSController struct {
 	*goa.Controller
 }
 
-// NewCSSController creates a css controller.
-func NewCSSController(service *goa.Service) *CSSController {
+// NewCSS creates a css controller.
+func NewCSS(service *goa.Service) *CSSController {
 	return &CSSController{Controller: service.NewController("CSSController")}
 }

@@ -11,10 +11,13 @@ spec:
     spec:
       containers:
       - name: image
-        image: localhost:5000/p7/image:0.0.1
+        image: gcr.io/k8s-p7/image:0.0.1
         ports:
-        - containerPort: 8887
+        - containerPort: 8890
         securityContext:
-        privileged: true
-        seLinuxOptions:
-          level: "s0:c123,c456"
+          privileged: true
+        volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run
+        #seLinuxOptions:
+        #  level: "s0:c123,c456"

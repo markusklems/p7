@@ -1,6 +1,5 @@
 FROM alpine:3.5
-DOCKER_API_VERSION=1.24
-RUN groupadd -r image && useradd -r -g image image
+RUN adduser -D -u 142 image
 USER image
 WORKDIR /app
 ADD image.tar /app/

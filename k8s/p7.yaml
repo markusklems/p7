@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: p7
+  labels:
+    name: p7
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -12,12 +20,13 @@ spec:
       labels:
         k8s-app: p7
     spec:
+      terminationGracePeriodSeconds: 60
       containers:
       - name: p7
         image: localhost:5000/p7/api:0.0.1
         livenessProbe:
           httpGet:
-            path: /p7/_ah/health
+            path: /p7/health/check
             port: 8888
             scheme: HTTP
           initialDelaySeconds: 30
@@ -35,8 +44,9 @@ spec:
           - name: SECRET_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: p7-db01-mysql
+                name: p7-mysql
                 key: mysql-password
+
 ---
 apiVersion: v1
 kind: Service
