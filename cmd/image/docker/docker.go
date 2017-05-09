@@ -6,10 +6,49 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )
+
+// JSONError wraps a concrete Code and Message, `Code` is
+// is an integer error code, `Message` is the error message.
+type JSONError struct {
+	Code    int    `json:"code,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
+// JSONProgress describes a Progress. terminalFd is the fd of the current terminal,
+// Start is the initial value for the operation. Current is the current status and
+// value of the progress made towards Total. Total is the end value describing when
+// we made 100% progress for an operation.
+type JSONProgress struct {
+	terminalFd uintptr
+	Current    int64 `json:"current,omitempty"`
+	Total      int64 `json:"total,omitempty"`
+	Start      int64 `json:"start,omitempty"`
+	// If true, don't show xB/yB
+	HideCounts bool `json:"hidecounts,omitempty"`
+}
+
+// JSONMessage defines a message struct. It describes
+// the created time, where it from, status, ID of the
+// message. It's used for docker events.
+type JSONMessage struct {
+	Stream          string        `json:"stream,omitempty"`
+	Status          string        `json:"status,omitempty"`
+	Progress        *JSONProgress `json:"progressDetail,omitempty"`
+	ProgressMessage string        `json:"progress,omitempty"` //deprecated
+	ID              string        `json:"id,omitempty"`
+	From            string        `json:"from,omitempty"`
+	Time            int64         `json:"time,omitempty"`
+	TimeNano        int64         `json:"timeNano,omitempty"`
+	Error           *JSONError    `json:"errorDetail,omitempty"`
+	ErrorMessage    string        `json:"error,omitempty"` //deprecated
+	// Aux contains out-of-band data, such as digests for push signing.
+	Aux *json.RawMessage `json:"aux,omitempty"`
+}
 
 // Docker represents a docker client
 // https://godoc.org/github.com/docker/docker/client
@@ -21,6 +60,15 @@ type Docker struct {
 type Message struct {
 	Stream      string
 	ErrorDetail string
+}
+
+func getImageBuildResponse(body []byte) (*JSONMessage, error) {
+	var s = new(JSONMessage)
+	err := json.Unmarshal(body, &s)
+	if err != nil {
+		fmt.Println("Couldn't decode image build response:", err)
+	}
+	return s, err
 }
 
 // NewDockerClient creates a new docker client instance
@@ -67,22 +115,15 @@ func (d *Docker) BuildImage(buildContext io.Reader, codePath string, tag string,
 		Tags:       tags,
 		Dockerfile: setDockerfile(provider),
 	}
-	response, err := d.client.ImageBuild(context.Background(), buildContext, imageBuildOptions)
+	buildResponse, err := d.client.ImageBuild(context.Background(), buildContext, imageBuildOptions)
 	if err != nil {
 		fmt.Printf("Couldn't build image: %s\n", err)
 	} else {
-		var m Message
-		err := json.Unmarshal(streamToByte(response.Body), &m)
+		body, err := ioutil.ReadAll(buildResponse.Body)
 		if err != nil {
-			fmt.Printf("Couldn't decode docker client response: %s\n", err)
-		} else {
-			if m.ErrorDetail != "" {
-				fmt.Printf("Built image with response: %s\n", m.ErrorDetail)
-			} else {
-				fmt.Printf("Built image with response: %s\n", m.Stream)
-			}
+			fmt.Printf("Couldn't decode docker client build response: %s\n", err)
 		}
-		defer response.Body.Close()
+		fmt.Printf(string(body))
 	}
 }
 
@@ -122,9 +163,9 @@ func (d *Docker) InspectImage(imageID string) (types.ImageInspect, []byte) {
 func setDockerfile(provider string) string {
 	var dockerfile string
 	switch provider {
-	case "gcloud":
+	case "GCLOUD":
 		dockerfile = "Dockerfile_gcloud"
-	case "azure":
+	case "AZURE":
 		dockerfile = "Dockerfile_azure"
 	default:
 		dockerfile = "Dockerfile_aws"

@@ -5,10 +5,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 
+	"github.com/go-kit/kit/log"
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/logging/kit"
 	"github.com/goadesign/goa/middleware"
 	"github.com/inconshreveable/log15"
 	"github.com/jinzhu/gorm"
@@ -28,7 +32,7 @@ func main() {
 	//var inside = flag.Bool("inside", true, "Binary runs inside a Kubernetes cluster. (bool)")
 	flag.Parse() // parse the flags
 	password := getenv("SECRET_PASSWORD", "p7password")
-	host := getenv("P7_DB01_MYSQL_SERVICE_HOST", "127.0.0.1")
+	host := getenv("P7_DB01_MYSQL_SERVICE_HOST", "mysql.p7")
 	port, err := strconv.Atoi(getenv("P7_DB01_MYSQL_SERVICE_PORT", "3306"))
 	if err != nil {
 		panic(err)
@@ -50,8 +54,18 @@ func main() {
 		ldb = models.NewLambdaDB(db)
 	}
 
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+
 	// Create service
 	service := goa.New("p7")
+
+	// Setup logger
+	w := log.NewSyncWriter(os.Stderr)
+	logger := log.NewLogfmtLogger(w)
+	goaLogger := goakit.New(logger)
+	service.WithLogger(goaLogger)
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
@@ -60,7 +74,7 @@ func main() {
 	service.Use(middleware.Recover())
 
 	// Mount "lambda" controller
-	fc := controllers.NewLambda(service, ldb)
+	fc := controllers.NewLambda(service, ldb, netClient, goaLogger)
 	app.MountLambdaController(service, fc)
 
 	// Mount "health" controller

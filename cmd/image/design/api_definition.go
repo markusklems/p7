@@ -10,7 +10,7 @@ import (
 var _ = API("image", func() {
 	Description("Docker image creation server")
 	Scheme("http")
-	Host("localhost:8890")
+	Host("127.0.0.1:8890")
 	BasePath("/image")
 
 	ResponseTemplate(Created, func(pattern string) {

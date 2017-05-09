@@ -1,0 +1,57 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: p7-api
+  labels:
+    k8s-app: p7-api
+  namespace: p7
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: p7-api
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: p7-api
+        image: gcr.io/k8s-p7/api:0.0.3
+        livenessProbe:
+          httpGet:
+            path: /p7/health/check
+            port: 8888
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8888
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        env:
+          - name: SECRET_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: p7-api
+  namespace: p7
+  labels:
+    k8s-app: p7-api
+spec:
+  ports:
+  - port: 80
+    targetPort: 8888
+  selector:
+    k8s-app: p7-api
+

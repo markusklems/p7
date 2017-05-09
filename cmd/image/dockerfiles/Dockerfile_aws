@@ -1,3 +1,5 @@
 FROM lambci/lambda
 ARG CODE_PATH
 ADD ${CODE_PATH} /var/task/
+USER root
+RUN chmod 777 /var/task/*

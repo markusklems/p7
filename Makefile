@@ -1,7 +1,7 @@
 all: p7
 
 
-TAG = 0.0.1
+TAG = 0.0.3
 PREFIX = p7
 ID = k8s-$(PREFIX)
 REGISTRY=gcr.io
@@ -12,33 +12,45 @@ DBROOTPW = $(shell tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1 | ba
 DBPW = $(shell tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1 | base64 -)
 APIDESIGNPATH = github.com/markusklems/p7/cmd/api/design
 IMAGEDESIGNPATH = github.com/markusklems/p7/cmd/image/design
+KUBEDESIGNPATH = github.com/markusklems/p7/cmd/kube/design
 #DBSECRET = $(cat k8s/p7-secret-template.yaml | sed -e "s,{{ password }},$(DBPW),g;" | kubectl create -f --namespace=p7 -)
 
-p7:
+api:
 	cd cmd/api
-	tar -cvf p7.tar public
-	-rm p7
-	go build -o p7 .
+	tar -cvf api.tar public
+	-rm api
+	export GO_EXTLINK_ENABLED=0
+	export CGO_ENABLED=0
+	go build --ldflags '-extldflags "-static"' -o api .
 
 image:
 	cd cmd/image
 	tar -cvf Dockerfile.tar -C dockerfiles .
-	tar -cvf image.tar js swagger swagger-ui Dockerfile.tar
+	tar -cvf image.tar public Dockerfile.tar
 	export GO_EXTLINK_ENABLED=0
 	export CGO_ENABLED=0
 	go build --ldflags '-extldflags "-static"' -o image .
+
+kube:
+	cd cmd/kube
+	tar -cvf kube.tar public
+	export GO_EXTLINK_ENABLED=0
+	export CGO_ENABLED=0
+	go build --ldflags '-extldflags "-static"' -o kube .
 
 clean:
 	rm $(KEY)
 	rm $(CERT)
 
-containers: image
-	docker build -t $(PREFIX)/image:$(TAG) cmd/image
-	docker tag $(PREFIX)/image:$(TAG) $(REGISTRY)/$(ID)/$(PREFIX)/image:$(TAG)
+containers: api
+	#docker build -t $(PREFIX)/image:$(TAG) cmd/image
+	#docker tag $(PREFIX)/image:$(TAG) $(REGISTRY)/$(ID)/$(PREFIX)/image:$(TAG)
 	#docker build -t $(PREFIX)/kube cmd/kube
 	#docker tag $(PREFIX)/kube localhost:5000/p7/kube
 	#docker build -t $(PREFIX)/api:$(TAG) cmd/api
 	#docker tag $(PREFIX)/api:$(TAG) localhost:5000/$(PREFIX)/api:$(TAG)
+	docker build -t $(PREFIX)/api:$(TAG) cmd/api
+	docker tag $(PREFIX)/api:$(TAG) $(REGISTRY)/$(ID)/api:$(TAG)
 
 push: containers
 	#docker push localhost:5000/$(PREFIX)/kube
@@ -71,7 +83,7 @@ secret: keys
 db:
 	helm install --name p7-db01 --namespace p7 --set mysqlLRootPassword=$(DBROOTPW),mysqlUser=user,mysqlPassword=$(DBPW),mysqlDatabase=p7 stable/mysql
 
-get-db-secret: 
+get-db-secret:
 	kubectl get secret --namespace p7 p7-db01-mysql -o jsonpath="{.data.mysql-root-password}" | base64 --decode; echo
 	kubectl get secret --namespace p7 p7-db01-mysql -o jsonpath="{.data.mysql-password}" | base64 --decode; echo
 
@@ -92,7 +104,20 @@ goagen_api:
 	goagen gen     -d $(APIDESIGNPATH) -o cmd/api --pkg-path=github.com/goadesign/gorma
 
 goagen_image:
-	goagen bootstrap -d $(IMAGEDESIGNPATH) -o cmd/image
+	goagen app        -d $(IMAGEDESIGNPATH) -o cmd/image
+	goagen client     -d $(IMAGEDESIGNPATH) -o cmd/image
+	goagen controller -d $(IMAGEDESIGNPATH) -o cmd/image/controllers
+	goagen js         -d $(IMAGEDESIGNPATH) -o cmd/image/public
+	goagen schema     -d $(IMAGEDESIGNPATH) -o cmd/image/public
+	goagen swagger    -d $(IMAGEDESIGNPATH) -o cmd/image/public
+
+goagen_kube:
+	goagen app        -d $(KUBEDESIGNPATH) -o cmd/kube
+	goagen client     -d $(KUBEDESIGNPATH) -o cmd/kube
+	goagen controller -d $(KUBEDESIGNPATH) -o cmd/kube/controllers
+	goagen js         -d $(KUBEDESIGNPATH) -o cmd/kube/public
+	goagen schema     -d $(KUBEDESIGNPATH) -o cmd/kube/public
+	goagen swagger    -d $(KUBEDESIGNPATH) -o cmd/kube/public
 
 run:
 	#docker run --rm -p 8888:8888 -ti $(PREFIX)/api:$(TAG)

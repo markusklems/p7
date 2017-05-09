@@ -22,6 +22,8 @@ var _ = StorageGroup("p7", func() {
 			})
 			Field("name", gorma.String, func() {})
 			Field("code", gorma.String, func() {})
+			Field("method", gorma.String, func() {})
+			Field("environment", gorma.String, func() {})
 			Field("created_at", gorma.Timestamp, func() {})
 			Field("updated_at", gorma.Timestamp, func() {})
 			Field("deleted_at", gorma.NullableTimestamp, func() {})

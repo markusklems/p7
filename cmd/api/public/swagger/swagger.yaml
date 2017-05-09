@@ -7,10 +7,20 @@ definitions:
   Lambda:
     description: A microservice function named lambda (default view)
     example:
+      environment: AZURE
       href: /lambdas/1
       id: 1
-      name: b6wz
+      method: DELETE
+      name: wz
     properties:
+      environment:
+        description: Execution environment used to run a lambda
+        enum:
+        - AWS
+        - GCLOUD
+        - AZURE
+        example: AZURE
+        type: string
       href:
         description: API href for making requests on the lambda
         example: /lambdas/1
@@ -20,24 +30,36 @@ definitions:
         example: 1
         format: int64
         type: integer
+      method:
+        description: HTTP method triggering a lambda
+        enum:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        example: DELETE
+        type: string
       name:
         description: Name of lambda
-        example: b6wz
+        example: wz
         minLength: 2
         type: string
     required:
     - id
     - href
     - name
+    - method
     title: 'Mediatype identifier: application/vnd.lambda+json; view=default'
     type: object
   LambdaCollection:
     description: LambdaCollection is the media type for an array of Lambda (default
       view)
     example:
-    - href: /lambdas/1
+    - environment: AZURE
+      href: /lambdas/1
       id: 1
-      name: b6wz
+      method: DELETE
+      name: wz
     items:
       $ref: '#/definitions/Lambda'
     title: 'Mediatype identifier: application/vnd.lambda+json; type=collection; view=default'
@@ -46,7 +68,9 @@ definitions:
     description: LambdaPayload is the type used to create a lambda
     example:
       code: f5bzyr60yi
-      name: rs5k
+      environment: AZURE
+      method: DELETE
+      name: 5k3
     properties:
       code:
         description: Code that should be executed
@@ -54,14 +78,31 @@ definitions:
         maxLength: 500
         minLength: 16
         type: string
+      environment:
+        enum:
+        - AWS
+        - GCLOUD
+        - AZURE
+        example: AZURE
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        example: DELETE
+        type: string
       name:
         description: Name of lambda
-        example: rs5k
+        example: 5k3
         minLength: 2
         type: string
     required:
     - name
     - code
+    - method
+    - environment
     title: LambdaPayload
     type: object
   error:
@@ -101,9 +142,10 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
-host: p7.tmrtn.de
+host: 127.0.0.1:8888
 info:
   description: Microservice management service
+  title: p7 api component
   version: ""
 paths:
   /:
@@ -115,7 +157,7 @@ paths:
           schema:
             type: file
       schemes:
-      - https
+      - http
       summary: Download public/html/index.html
   /css/{filepath}:
     get:
@@ -136,7 +178,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - https
+      - http
       summary: Download public/css
   /img/{filepath}:
     get:
@@ -157,7 +199,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - https
+      - http
       summary: Download public/img
   /js/{filepath}:
     get:
@@ -178,24 +220,29 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - https
+      - http
       summary: Download public/js
   /p7/health/check:
     get:
       description: Perform health check.
       operationId: health#check
+      produces:
+      - text/plain
       responses:
         "200":
           description: OK
       schemes:
-      - https
+      - http
       summary: check health
       tags:
       - health
   /p7/lambdas:
     get:
-      description: List all avilable lambdas
+      description: List all available lambdas
       operationId: lambda#list
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.lambda+json; type=collection
       responses:
         "200":
           description: OK
@@ -208,7 +255,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: list lambda
       tags:
       - lambda
@@ -222,6 +269,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/LambdaPayload'
+      produces:
+      - application/vnd.goa.error
       responses:
         "201":
           description: Resource created
@@ -237,7 +286,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: create lambda
       tags:
       - lambda
@@ -249,6 +298,8 @@ paths:
         name: lambda_id
         required: true
         type: integer
+      produces:
+      - application/vnd.goa.error
       responses:
         "204":
           description: No Content
@@ -259,7 +310,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: delete lambda
       tags:
       - lambda
@@ -272,6 +323,8 @@ paths:
         name: lambda_id
         required: true
         type: integer
+      produces:
+      - application/vnd.lambda+json
       responses:
         "200":
           description: OK
@@ -280,7 +333,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: show lambda
       tags:
       - lambda
@@ -297,6 +350,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/LambdaPayload'
+      produces:
+      - application/vnd.goa.error
       responses:
         "204":
           description: No Content
@@ -307,7 +362,7 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: update lambda
       tags:
       - lambda
@@ -321,6 +376,8 @@ paths:
         name: lambda_id
         required: true
         type: integer
+      produces:
+      - application/vnd.lambda+json
       responses:
         "200":
           description: OK
@@ -329,8 +386,101 @@ paths:
         "404":
           description: Not Found
       schemes:
-      - https
+      - http
       summary: code lambda
+      tags:
+      - lambda
+  /p7/lambdas/{lambda_id}/actions/run:
+    delete:
+      operationId: lambda#run#3
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: run lambda
+      tags:
+      - lambda
+    get:
+      operationId: lambda#run
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: run lambda
+      tags:
+      - lambda
+    post:
+      operationId: lambda#run#1
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: run lambda
+      tags:
+      - lambda
+    put:
+      operationId: lambda#run#2
+      parameters:
+      - in: path
+        name: lambda_id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: run lambda
       tags:
       - lambda
   /p7/lambdas/{lambda_id}/watch:
@@ -342,6 +492,8 @@ paths:
         name: lambda_id
         required: true
         type: integer
+      produces:
+      - application/vnd.goa.error
       responses:
         "101":
           description: Switching Protocols
@@ -373,7 +525,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - https
+      - http
       summary: Download public/swagger-ui/
   /swagger.json:
     get:
@@ -384,7 +536,7 @@ paths:
           schema:
             type: file
       schemes:
-      - https
+      - http
       summary: Download public/swagger/swagger.json
 produces:
 - application/json
@@ -403,5 +555,5 @@ responses:
   SwitchingProtocols:
     description: Switching Protocols
 schemes:
-- https
+- http
 swagger: "2.0"

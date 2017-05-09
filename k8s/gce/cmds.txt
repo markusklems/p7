@@ -1,0 +1,8 @@
+gcloud config set project k8s-p7
+gcloud config set compute/zone europe-west1-d
+gcloud compute disks create --size 200GB mysql-disk
+kubectl create -f ns.yaml
+kubectl create secret generic mysql -n p7 --from-literal=password=6XDeLD4OkXGHrDtMeaiVdrbP8z07R0RN
+kubectl create -n p7 -f mysql.yaml
+# helm install --name p7 --namespace p7 stable/mysql
+kubectl get svc -l app=p7-service

@@ -8,9 +8,10 @@ import (
 // API defines the microservice endpoint and
 // other global properties.
 var _ = API("p7", func() {
+	Title("p7 api component")
 	Description("Microservice management service")
-	Scheme("https")
-	Host("p7.tmrtn.de")
+	Scheme("http")
+	Host("127.0.0.1:8888")
 	BasePath("/p7")
 
 	ResponseTemplate(Created, func(pattern string) {

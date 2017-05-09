@@ -1,0 +1,52 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: p7-mysql
+  namespace: p7
+  labels:
+    app: p7-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: p7-mysql
+  template:
+    metadata:
+      labels:
+        app: p7-mysql
+    spec:
+      containers:
+        - image: mysql:5.6
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          gcePersistentDisk:
+            pdName: mysql-disk
+            fsType: ext4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: p7
+  labels:
+    app: mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+  selector:
+    app: mysql

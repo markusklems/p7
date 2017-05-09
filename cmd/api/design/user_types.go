@@ -18,5 +18,11 @@ var LambdaPayload = Type("LambdaPayload", func() {
 		MinLength(16)
 		MaxLength(500)
 	})
-	Required("name", "code")
+	Attribute("method", func() {
+		Enum("GET", "POST", "PUT", "DELETE")
+	})
+	Attribute("environment", func() {
+		Enum("AWS", "GCLOUD", "AZURE")
+	})
+	Required("name", "code", "method", "environment")
 })

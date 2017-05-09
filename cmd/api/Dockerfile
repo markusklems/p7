@@ -1,6 +1,6 @@
 FROM google/debian:wheezy
 WORKDIR /app
-ADD p7.tar /app/
-COPY p7 /app/
+ADD api.tar /app/
+COPY api /app/
 EXPOSE 8888
-ENTRYPOINT ["./p7"]
+ENTRYPOINT ["./api"]

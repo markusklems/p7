@@ -1,0 +1,385 @@
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+definitions:
+  CreateImagePayload:
+    example:
+      codePath: Possimus laudantium eveniet.
+      provider: Est rerum ut nisi ut voluptas voluptatem.
+      tag: Provident repellendus ut corrupti.
+    properties:
+      codePath:
+        example: Possimus laudantium eveniet.
+        type: string
+      provider:
+        example: Est rerum ut nisi ut voluptas voluptatem.
+        type: string
+      tag:
+        example: Provident repellendus ut corrupti.
+        type: string
+    required:
+    - codePath
+    - tag
+    title: CreateImagePayload
+    type: object
+  Image:
+    description: A docker image (default view)
+    example:
+      architecture: Optio animi dolores suscipit fugiat commodi ut.
+      author: Nam quia commodi.
+      comment: Dolores consequatur suscipit iure.
+      container: Eos vitae modi exercitationem rem.
+      containers: 6.7844425e+18
+      created_at: 1974-09-20T06:51:45+01:00
+      fullId: sha256:ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+      href: /images/1
+      id: ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+      labels: 2010-11-16T23:58:40+01:00
+      os: Commodi possimus eius.
+      osVersion: Adipisci quia blanditiis fuga similique nulla eaque.
+      parent: Labore beatae reiciendis sunt non.
+      parentID: Hic possimus corporis rerum ut ut provident.
+      repoDigests: 1972-05-22T08:33:00+01:00
+      repoTags: true
+      size: 1.7827493e+18
+    properties:
+      architecture:
+        description: Architecture of image
+        example: Optio animi dolores suscipit fugiat commodi ut.
+        type: string
+      author:
+        description: Author of image
+        example: Nam quia commodi.
+        type: string
+      comment:
+        description: Comment of image
+        example: Dolores consequatur suscipit iure.
+        type: string
+      container:
+        description: Container
+        example: Eos vitae modi exercitationem rem.
+        type: string
+      containers:
+        description: Containers
+        example: 6.7844425e+18
+        format: int64
+        type: integer
+      created_at:
+        description: Date of creation
+        example: 1974-09-20T06:51:45+01:00
+        format: date-time
+        type: string
+      fullId:
+        description: Complete ID of image
+        example: sha256:ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+        type: string
+      href:
+        description: API href of image
+        example: /images/1
+        type: string
+      id:
+        description: ID of image
+        example: ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+        type: string
+      labels:
+        description: Labels of one container
+        example: 2010-11-16T23:58:40+01:00
+      os:
+        description: OS of image
+        example: Commodi possimus eius.
+        type: string
+      osVersion:
+        description: OS version of image
+        example: Adipisci quia blanditiis fuga similique nulla eaque.
+        type: string
+      parent:
+        description: Parent container
+        example: Labore beatae reiciendis sunt non.
+        type: string
+      parentID:
+        description: Parent container ID
+        example: Hic possimus corporis rerum ut ut provident.
+        type: string
+      repoDigests:
+        description: Digests of one container
+        example: 1972-05-22T08:33:00+01:00
+      repoTags:
+        description: Tags of one container
+        example: true
+      size:
+        description: Size of image
+        example: 1.7827493e+18
+        format: int64
+        type: integer
+    required:
+    - id
+    - fullId
+    - href
+    - containers
+    - parentID
+    - repoTags
+    - labels
+    - created_at
+    title: 'Mediatype identifier: application/vnd.image+json; view=default'
+    type: object
+  ImageCollection:
+    description: ImageCollection is the media type for an array of Image (default
+      view)
+    example:
+    - architecture: Optio animi dolores suscipit fugiat commodi ut.
+      author: Nam quia commodi.
+      comment: Dolores consequatur suscipit iure.
+      container: Eos vitae modi exercitationem rem.
+      containers: 6.7844425e+18
+      created_at: 1974-09-20T06:51:45+01:00
+      fullId: sha256:ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+      href: /images/1
+      id: ec496b4bc6e307efea8dd6e4038379e973b558ac60a0c58216a1691976c96ef6
+      labels: 2010-11-16T23:58:40+01:00
+      os: Commodi possimus eius.
+      osVersion: Adipisci quia blanditiis fuga similique nulla eaque.
+      parent: Labore beatae reiciendis sunt non.
+      parentID: Hic possimus corporis rerum ut ut provident.
+      repoDigests: 1972-05-22T08:33:00+01:00
+      repoTags: true
+      size: 1.7827493e+18
+    items:
+      $ref: '#/definitions/Image'
+    title: 'Mediatype identifier: application/vnd.image+json; type=collection; view=default'
+    type: array
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+host: 127.0.0.1:8890
+info:
+  description: Docker image creation server
+  version: ""
+paths:
+  /image/health/check:
+    get:
+      description: Perform health check.
+      operationId: health#check
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: check health
+      tags:
+      - health
+  /image/images:
+    get:
+      description: Retrieve all images.
+      operationId: image#list
+      produces:
+      - application/vnd.image+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ImageCollection'
+      schemes:
+      - http
+      summary: list image
+      tags:
+      - image
+    post:
+      description: Create new image
+      operationId: image#create
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateImagePayload'
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "201":
+          description: Resource created
+          headers:
+            Location:
+              description: href to created resource
+              pattern: /image/[0-9]+
+              type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: create image
+      tags:
+      - image
+  /image/images/{image_id}:
+    delete:
+      operationId: image#delete
+      parameters:
+      - description: Image ID
+        in: path
+        name: image_id
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: delete image
+      tags:
+      - image
+    get:
+      description: Retrieve image with given id. IDs 1 and 2 pre-exist in the system.
+      operationId: image#show
+      parameters:
+      - description: Image ID
+        in: path
+        name: image_id
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.image+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Image'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: show image
+      tags:
+      - image
+  /js/{filepath}:
+    get:
+      operationId: js#/js/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download public/js
+  /swagger-ui/{filepath}:
+    get:
+      operationId: swagger#/swagger-ui/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download swagger-ui/
+  /swagger.json:
+    get:
+      operationId: swagger#/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download swagger/swagger.json
+  /ui:
+    get:
+      operationId: public#/ui
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download public/html/index.html
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+responses:
+  NoContent:
+    description: No Content
+  NotFound:
+    description: Not Found
+  OK:
+    description: OK
+    schema:
+      $ref: '#/definitions/Image'
+schemes:
+- http
+swagger: "2.0"

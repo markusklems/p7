@@ -3,6 +3,9 @@ package controllers
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 
 	"github.com/goadesign/goa"
 	"github.com/jinzhu/gorm"
@@ -17,14 +20,18 @@ var ErrDatabaseError = goa.NewErrorClass("db_error", 500)
 // LambdaController implements the lambda resource.
 type LambdaController struct {
 	*goa.Controller
-	ldb *models.LambdaDB
+	ldb       *models.LambdaDB
+	netClient *http.Client
+	logger    goa.LogAdapter
 }
 
 // NewLambda creates a lambda controller.
-func NewLambda(service *goa.Service, ldb *models.LambdaDB) *LambdaController {
+func NewLambda(service *goa.Service, ldb *models.LambdaDB, netClient *http.Client, logger goa.LogAdapter) *LambdaController {
 	return &LambdaController{
 		Controller: service.NewController("LambdaController"),
 		ldb:        ldb,
+		netClient:  netClient,
+		logger:     logger,
 	}
 }
 
@@ -71,6 +78,33 @@ func (lc *LambdaController) Delete(ctx *app.DeleteLambdaContext) error {
 func (lc *LambdaController) List(ctx *app.ListLambdaContext) error {
 	lambdas := lc.ldb.ListLambda(ctx.Context)
 	return ctx.OK(lambdas)
+}
+
+// Run runs the run action.
+func (lc *LambdaController) Run(ctx *app.RunLambdaContext) error {
+	// LambdaController_Run: start_implement
+	lambda, err := lc.ldb.OneLambda(ctx.Context, ctx.LambdaID)
+	if err == gorm.ErrRecordNotFound {
+		return ctx.NotFound()
+	} else if err != nil {
+		return ErrDatabaseError(err)
+	}
+	lc.logger.Info("Run action with method: %s\n", ctx.Request.Method)
+	if lambda.Method == ctx.Request.Method {
+		resp, err := lc.netClient.PostForm("http://p7-kube:", url.Values{"q": {"github"}})
+		if err != nil {
+			lc.logger.Error("Couldn't reach Kube component: %q", err)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			lc.logger.Error("Couldn't decode Kube response: %q", err)
+		}
+		lc.logger.Info("Created new Kubernetes job: %s\n", string(body))
+		return nil
+	}
+	return ctx.NotFound()
+	// LambdaController_Run: end_implement
 }
 
 // Show runs the show action.

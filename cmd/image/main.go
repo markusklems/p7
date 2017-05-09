@@ -3,7 +3,11 @@
 package main
 
 import (
+	"os"
+
+	"github.com/go-kit/kit/log"
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/logging/kit"
 	"github.com/goadesign/goa/middleware"
 	"github.com/markusklems/p7/cmd/image/app"
 	"github.com/markusklems/p7/cmd/image/controllers"
@@ -13,6 +17,12 @@ import (
 func main() {
 	// Create service
 	service := goa.New("image")
+
+	// Setup logger
+	w := log.NewSyncWriter(os.Stderr)
+	logger := log.NewLogfmtLogger(w)
+	goaLogger := goakit.New(logger)
+	service.WithLogger(goaLogger)
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
@@ -28,20 +38,20 @@ func main() {
 	}
 
 	// Mount "image" controller onto service
-	c := controllers.NewImageController(service, docker)
-	app.MountImageController(service, c)
+	ic := controllers.NewImageController(service, docker)
+	app.MountImageController(service, ic)
 
 	// Mount "js" controller onto service
-	c2 := controllers.NewJsController(service)
-	app.MountJsController(service, c2)
+	jc := controllers.NewJsController(service)
+	app.MountJsController(service, jc)
 
 	// Mount "public" controller onto service
-	c3 := controllers.NewPublicController(service)
-	app.MountPublicController(service, c3)
+	pc := controllers.NewPublicController(service)
+	app.MountPublicController(service, pc)
 
 	// Mount "swagger" controller onto service
-	c4 := controllers.NewSwaggerController(service)
-	app.MountSwaggerController(service, c4)
+	sc := controllers.NewSwaggerController(service)
+	app.MountSwaggerController(service, sc)
 
 	// Start service
 	if err := service.ListenAndServe(":8890"); err != nil {

@@ -33,3 +33,5 @@ import:
   subpackages:
   - go/ast/astutil
 - package: gopkg.in/yaml.v2
+- package: github.com/moby/moby
+  version: 17.04.0-ce

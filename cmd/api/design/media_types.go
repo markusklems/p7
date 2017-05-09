@@ -21,19 +21,24 @@ var Lambda = MediaType("application/vnd.lambda+json", func() {
 		Attribute("updated_at", DateTime, "Date of last update")
 		// Attributes below inherit from the base type
 		Attribute("name", String, "Name of lambda")
-		Required("id", "href", "name", "code")
+		Attribute("method", String, "HTTP method triggering a lambda")
+		Attribute("environment", String, "Execution environment used to run a lambda")
+		Required("id", "href", "name", "code", "method")
 	})
 
 	View("default", func() { // View defines a rendering of the media type.
 		Attribute("id")   // Media types may have multiple views and must
 		Attribute("href") // have a "default" view.
 		Attribute("name")
+		Attribute("method")
+		Attribute("environment")
 	})
 
 	View("tiny", func() {
 		Attribute("id")
 		Attribute("href")
 		Attribute("name")
+		Attribute("method")
 	})
 
 	View("code", func() {
@@ -45,6 +50,8 @@ var Lambda = MediaType("application/vnd.lambda+json", func() {
 		Attribute("href")
 		Attribute("name")
 		Attribute("code")
+		Attribute("method")
+		Attribute("environment")
 		Attribute("created_at")
 		Attribute("updated_at")
 		Attribute("links")

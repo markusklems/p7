@@ -18,7 +18,7 @@ var _ = Resource("lambda", func() {
 		Routing(
 			GET(""),
 		)
-		Description("List all avilable lambdas")
+		Description("List all available lambdas")
 		Response(OK, func() {
 			Media(CollectionOf(Lambda, func() {
 				View("default")
@@ -93,6 +93,21 @@ var _ = Resource("lambda", func() {
 	Action("delete", func() {
 		Routing(
 			DELETE("/:lambda_id"),
+		)
+		Params(func() {
+			Param("lambda_id", Integer)
+		})
+		Response(NoContent)
+		Response(NotFound)
+		Response(BadRequest, ErrorMedia)
+	})
+
+	Action("run", func() {
+		Routing(
+			GET("/:lambda_id/actions/run"),
+			POST("/:lambda_id/actions/run"),
+			PUT("/:lambda_id/actions/run"),
+			DELETE("/:lambda_id/actions/run"),
 		)
 		Params(func() {
 			Param("lambda_id", Integer)
